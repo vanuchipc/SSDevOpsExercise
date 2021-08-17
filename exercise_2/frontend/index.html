@@ -10,9 +10,10 @@
     <p id="fortune">Loading...</p>
     <p>Version 0.2</p>
 
+    <!-- Changed double quotes to single quotes in the getElementById('fortunate') for it to work with String interpolation -->
     <script>
         fetch('/fortune').then(resp => resp.json()).then(data => {
-            document.getElementById("fortune").innerText = data.fortune;
+            document.getElementById('fortune').innerText = data.fortune;
         })
     </script>
 </body>

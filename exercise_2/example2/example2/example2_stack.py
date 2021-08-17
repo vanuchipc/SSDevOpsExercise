@@ -43,14 +43,14 @@ class Example2Stack(cdk.Stack):
         # Install Lambda dependencies
         if not os.environ.get('SKIP_PIP'):
             subprocess.check_call(
-                f'pip install -r ../exercise_1/fortune_handler/requirements.txt -t ./fortune_handler'.split()
+                f'pip install -r ../exercise_1/fortune_handler/requirements.txt -t ../exercise_1/fortune_handler'.split()
             )
 
         # Fortune Handler lambda creation
         fortune_handler_lambda = aws_lambda.Function(
             scope=self,
             id="Fortune Handler",
-            code=aws_lambda.Code.asset("./fortune_handler"),
+            code=aws_lambda.Code.asset("../exercise_1/fortune_handler"),
             handler="app.lambda_handler",
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             vpc=myVPC
@@ -68,14 +68,22 @@ class Example2Stack(cdk.Stack):
         # https: // docs.aws.amazon.com / AWSEC2 / latest / UserGuide / concepts.html
         # Primarily used this example for ASG and converted to Python: https://bobbyhadz.com/blog/aws-cdk-application-load-balancer
 
+        # Python File I/O example used for reading single file:
+        # https://www.w3resource.com/python-exercises/file/python-io-exercise-6.php
+        # https://www.programiz.com/python-programming/methods/string/join
+        # This solution is not scaleable but it should work for this specific instance of only using a single file. In a professional environment it seems I'd use S3 and potentially AWS Amplify,
+        # but those can also incur costs and extra complexity here that I felt would make it unnecessarily difficult for a project where everything was already new to me.
+        frontend_resource=' '.join(file_read("./frontend/index.html"))
+
         # Create user data script
+        # https://www.programiz.com/python-programming/string-interpolation
         user_data = aws_ec2.UserData.for_linux()
         user_data.add_commands(
             'sudo su',
             'yum install -y httpd',
             'systemctl start httpd',
             'systemctl enable httpd',
-            'echo "<h1>Please add "/fortune" to the end of this URL to receive your fortune!</h1>" > /var/www/html/index.html',
+            f'echo "{frontend_resource}" > /var/www/html/index.html',
         )
 
         # Creating Auto Scaling Group
@@ -114,15 +122,6 @@ class Example2Stack(cdk.Stack):
             targets=[fortune_handler_lambda_target]
         )
 
-        # Finish action for displaying frontend
-        #myListener.add_action(
-        #    id="/fortune",
-        #   priority=5,
-        #    conditions=aws_elasticloadbalancingv2.ListenerCondition.path_patterns('/fortune'),
-        #    action=aws_elasticloadbalancingv2.ListenerAction.redirect
-        #    )
-        #)
-
         # Add EC2 listener target
         myListener.add_targets(
             id="default-target",
@@ -135,3 +134,12 @@ class Example2Stack(cdk.Stack):
             id='requests-per-minute',
             target_requests_per_minute=60
         )
+
+# Python File I/O example used for reading single file:
+# https://www.w3resource.com/python-exercises/file/python-io-exercise-6.php
+# This solution is not scaleable but it should work for this specific instance of only using a single file. In a professional environment it seems I'd use S3 and potentially AWS Amplify,
+# but those can also incur costs and extra complexity here that I felt would make it unnecessarily difficult for a project where everything was already new to me.
+def file_read(fname):
+    with open(fname, "r") as myfile:
+        data = myfile.readlines()
+        return data

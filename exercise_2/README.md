@@ -2,7 +2,6 @@
 
 Deploy the [provided web site](frontend/) on an EC2-based web server. The web application calls the API from the first exercise. The web application should scale elastically based on load (using reasonable metrics of your choosing). Consider how to increase the application's observability. Deploy all infrastructure using an Infrastructure as Code tool (CloudFormation/CDK or Terraform are strongly preferred). EC2 instances should bootstrap themselves without manual intervention.
 
-##Example 2 isn't quite finished yet.
 ### I have never done problems like these, and have very little to no experience using AWS and CDK, but I was able to put together a working solution that I hope fulfills all of the requirements, although I didn't really know what to do in terms of increasing observability.
 ### I had to use a lot of the AWS documentation available online as well as other examples found online.
 ### I chose Python because I feel like it's a really important language that I need more practice with and would like to work with more.
