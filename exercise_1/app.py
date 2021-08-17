@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import os
-
+import aws_cdk
 from aws_cdk import core as cdk
 
 # For consistency with TypeScript code, `cdk` is the preferred import name for
